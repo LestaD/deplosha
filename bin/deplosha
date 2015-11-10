@@ -16,12 +16,15 @@ var env, command;
 if (argv._[1]) {
   env = argv._[0];
   command = argv._[1];
-} else if (argv._[0]) {
+}
+else if (argv._[0]) {
   env = 'production';
   command = argv._[0];
-} else {
+}
+else {
   // ???
 }
+
 deplosha.init(env);
 
 if (argv.T) {

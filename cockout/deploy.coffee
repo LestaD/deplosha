@@ -81,9 +81,9 @@ namespace 'deploy', ->
     task 'cleanup', (done) -> sequence 'prepare', 'removeOldReleases', done
 
     task 'removeOldReleases', (done) ->
-    return console.log('Nothing to cleanup', done()) if deplosha.releases.length <= deplosha.keepReleases
-    console.log "Deleting #{deplosha.releases.length - deplosha.keepReleases} releases, keep latest #{deplosha.keepReleases} releases"
-    run "cd #{deplosha.releasesPath} && rm -rf #{deplosha.releases.slice(0, -deplosha.keepReleases).join(' ')}", done
+      return console.log('Nothing to cleanup', done()) if deplosha.releases.length <= deplosha.keepReleases
+      console.log "Deleting #{deplosha.releases.length - deplosha.keepReleases} releases, keep latest #{deplosha.keepReleases} releases"
+      run "cd #{deplosha.releasesPath} && rm -rf #{deplosha.releases.slice(0, -deplosha.keepReleases).join(' ')}", done
 
   desc """
     Remove current symlink, symlink current release and log file

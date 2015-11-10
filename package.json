@@ -1,7 +1,7 @@
 {
   "name": "deplosha",
   "description": "Deploy app to remote server via ssh",
-  "version": "0.1.1-dev3",
+  "version": "0.2",
   "repository": {
     "type": "git",
     "url": "git@github.com:LestaD/deplosha.git"
