@@ -42,6 +42,14 @@ This files can extend behavior of deplosha and configure variables. Checkout exa
 ### my ~/.deplosha.coffee file
 
 ```coffee-script
+
+set 'hosts', ['prod1.service.com', 'prod2.service.com']
+set 'branch', 'release/latest'
+
+envKit 'staging', ->
+    set 'hosts', ['staging.service.com']
+    set 'branch', 'release/staging'
+
 namespace 'deploy', ->
     # show status of running application
     task 'status', ->
@@ -92,6 +100,29 @@ namespace 'deploy', ->
     task 'start', (done) -> run "cd #{deplosha.currentPath}; forever start server.js"
     task 'stop', (done) -> run "cd #{deplosha.currentPath}; forever stop"
 ```
+
+## Environment Kit
+
+Here
+
+    deplosha staging deploy
+
+`staging` is custom environment. You can change default values with `envKit`
+
+```coffee-script
+
+set 'hosts', ['production.service.com']
+
+envKit 'staging', ->
+    set 'hosts', ['staging.service.com']
+
+envKit 'development', ->
+    set 'hosts', ['dev.service.com']
+    set 'env', 'production'
+```
+
+If you change environment, host too changes
+
 
 ## Another snippets
 
