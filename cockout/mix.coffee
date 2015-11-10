@@ -1,31 +1,31 @@
 # set 'hosts', ['node-js.ru']
-set 'nodever', '0.8.12'
+set 'nodever', '4.2.1'
 
 namespace 'deploy', ->
     task 'status', ->
-        run "sudo status #{roco.application}"
+        run "sudo status #{deplosha.application}"
 
     task 'npm:update', ->
-        run "cd #{roco.currentPath}; npm install -l"
+        run "cd #{deplosha.currentPath}; npm install -l"
 
     # task 'request', (done) ->
-        # run "curl -I http://localhost:#{roco.appPort}/", done
+        # run "curl -I http://localhost:#{deplosha.appPort}/", done
 
 namespace 'node', ->
   task 'update', (done) -> sequence 'download', 'unpack', 'compile', 'install', done
   task 'rebuild', (done) -> sequence 'unpack', 'compile', 'install', done
   task 'download', (done) ->
-    run "cd /tmp && wget http://nodejs.org/dist/v#{roco.nodever}/node-v#{roco.nodever}.tar.gz", done
+    run "cd /tmp && wget http://nodejs.org/dist/v#{deplosha.nodever}/node-v#{deplosha.nodever}.tar.gz", done
   task 'unpack', (done) ->
-    run "cd /tmp && tar xfv node-v#{roco.nodever}.tar.gz", done
+    run "cd /tmp && tar xfv node-v#{deplosha.nodever}.tar.gz", done
   task 'compile', (done) ->
-    run "cd /tmp/node-v#{roco.nodever} && ./configure && make", done
+    run "cd /tmp/node-v#{deplosha.nodever} && ./configure && make", done
   task 'install', (done) ->
-    run "cd /tmp/node-v#{roco.nodever} && sudo make install", done
+    run "cd /tmp/node-v#{deplosha.nodever} && sudo make install", done
 
 namespace 'git', ->
     task 'remote', ->
-        app = roco.application
+        app = deplosha.application
         run """
         mkdir #{app}.git;
         cd #{app}.git;
@@ -48,7 +48,7 @@ namespace 'i', ->
         sequence 'top', 'free', 'disk', 'node', done
 
     task 'log', ->
-        run "tail -n 100 #{roco.sharedPath}/log/#{roco.env}*"
+        run "tail -n 100 #{deplosha.sharedPath}/log/#{deplosha.env}*"
 
 after 'i:disk', 'i:node'
 

@@ -3,30 +3,30 @@ if (!process.env.TRAVIS) {
     semicov.init('lib'); process.on('exit', semicov.report);
 }
 var rockout = require('../lib/rockout');
-var roco;
+var deplosha;
 
 exports['init'] = function (test) {
-    roco = rockout.init();
-    test.equal(roco.constructor.name, 'Roco');
+    deplosha = rockout.init();
+    test.equal(deplosha.constructor.name, 'Roco');
     test.done();
 };
 
 exports['perform non-existant task'] = function (test) {
-    var abort = roco.abort;
-    roco.abort = function (msg) {
+    var abort = deplosha.abort;
+    deplosha.abort = function (msg) {
         test.ok(msg.match('Unknown command test'));
-        roco.abort = abort;
+        deplosha.abort = abort;
         test.done();
     };
     rockout.perform('test');
 };
 
 exports['define and perform task'] = function (test) {
-    roco.ns = 'ns';
-    roco.task('test', function () {
+    deplosha.ns = 'ns';
+    deplosha.task('test', function () {
         test.done();
     });
-    roco.env = 'staging';
+    deplosha.env = 'staging';
     rockout.perform('ns:test');
 };
 
@@ -34,11 +34,11 @@ exports['run command on remote server and locally'] = function (test) {
     test.expect(3);
     var cp = require('child_process');
     var spawn = cp.spawn;
-    roco.ns = 'test';
-    roco.set('hosts', ['some.host', 'another.host']);
-    roco.task('default', function () {
-        roco.run('cmd remote', function () {
-            roco.localRun('cmd local', function () {
+    deplosha.ns = 'test';
+    deplosha.set('hosts', ['some.host', 'another.host']);
+    deplosha.task('default', function () {
+        deplosha.run('cmd remote', function () {
+            deplosha.localRun('cmd local', function () {
                 cp.spawn = spawn;
                 process.nextTick(test.done);
             });

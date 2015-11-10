@@ -11,25 +11,25 @@ ensure 'keepReleases', -> 5
 ensure 'env',          'production'
 ensure 'scm',          'git'
 ensure 'branch',       'master'
-ensure 'deployTo', ->  "/var/www/apps/#{roco.application}/#{roco.env}"
+ensure 'deployTo', ->  "/var/www/apps/#{deplosha.application}/#{deplosha.env}"
 ensure 'releaseName',  Date.now()
 ensure 'releasesDir',  'releases'
 ensure 'sharedDir',    'shared'
 ensure 'currentDir',   'current'
-ensure 'releasesPath', -> path.resolve(roco.deployTo, roco.releasesDir)
-ensure 'sharedPath',   -> path.resolve(roco.deployTo, roco.sharedDir)
-ensure 'currentPath',  -> path.resolve(roco.deployTo, roco.currentDir)
-ensure 'releasePath',  -> path.resolve(roco.releasesPath, ''+roco.releaseName)
-ensure 'previousReleasePath', -> path.resolve(roco.releasesPath, ''+roco.previousRelease)
-ensure 'latestReleasePath', -> path.resolve(roco.releasesPath, ''+roco.latestRelease)
+ensure 'releasesPath', -> path.resolve(deplosha.deployTo, deplosha.releasesDir)
+ensure 'sharedPath',   -> path.resolve(deplosha.deployTo, deplosha.sharedDir)
+ensure 'currentPath',  -> path.resolve(deplosha.deployTo, deplosha.currentDir)
+ensure 'releasePath',  -> path.resolve(deplosha.releasesPath, ''+deplosha.releaseName)
+ensure 'previousReleasePath', -> path.resolve(deplosha.releasesPath, ''+deplosha.previousRelease)
+ensure 'latestReleasePath', -> path.resolve(deplosha.releasesPath, ''+deplosha.latestRelease)
 ensure 'env', 'production'
 ensure 'nodeEntry', 'index.js'
 ensure 'appPort', process.env.APP_PORT || process.env.PORT || 3003
 ensure 'job', ->
-    if roco.env == 'production'
-        roco.application
+    if deplosha.env == 'production'
+        deplosha.application
     else
-        roco.application + '-' + roco.env
+        deplosha.application + '-' + deplosha.env
 
 namespace 'deploy', ->
 
@@ -49,7 +49,7 @@ namespace 'deploy', ->
     task 'update', (done) -> sequence 'prepare', 'updateCode', 'symlink', done
 
     task 'prepare', (done) ->
-        run "ls -x #{roco.releasesPath}", (res) ->
+        run "ls -x #{deplosha.releasesPath}", (res) ->
             rs = res[0].out.replace(/^\s+|\s+$/g, '').split(/\s+/).sort()
             set 'releases', rs
             set 'latestRelease', rs[rs.length - 1]
@@ -57,42 +57,42 @@ namespace 'deploy', ->
             done()
 
     task 'updateCode', (done) ->
-        localRun "git ls-remote #{roco.repository} #{roco.branch}", (x) ->
+        localRun "git ls-remote #{deplosha.repository} #{deplosha.branch}", (x) ->
             head = x.split(/\s+/).shift()
             run """
-                if [ -d #{roco.sharedPath}/cached-copy ];
-                  then cd #{roco.sharedPath}/cached-copy &&
+                if [ -d #{deplosha.sharedPath}/cached-copy ];
+                  then cd #{deplosha.sharedPath}/cached-copy &&
                   git fetch -q origin && git fetch --tags -q origin &&
                   git reset -q --hard #{head} && git clean -q -d -f;
                   git submodule update --init
                 else
-                  git clone -q #{roco.repository} #{roco.sharedPath}/cached-copy &&
-                  cd #{roco.sharedPath}/cached-copy &&
+                  git clone -q #{deplosha.repository} #{deplosha.sharedPath}/cached-copy &&
+                  cd #{deplosha.sharedPath}/cached-copy &&
                   git checkout -q -b deploy #{head};
                   git submodule update --init
                 fi
                 """, ->
                     run """
-                        cd #{roco.sharedPath}/cached-copy;
+                        cd #{deplosha.sharedPath}/cached-copy;
                         npm install -l;
-                        cp -RPp #{roco.sharedPath}/cached-copy #{roco.releasePath}
+                        cp -RPp #{deplosha.sharedPath}/cached-copy #{deplosha.releasePath}
                         """, done
 
       task 'cleanup', (done) -> sequence 'prepare', 'removeOldReleases', done
 
       task 'removeOldReleases', (done) ->
-        return console.log('Nothing to cleanup', done()) if roco.releases.length <= roco.keepReleases
-        console.log "Deleting #{roco.releases.length - roco.keepReleases} releases, keep latest #{roco.keepReleases} releases"
-        run "cd #{roco.releasesPath} && rm -rf #{roco.releases.slice(0, -roco.keepReleases).join(' ')}", done
+        return console.log('Nothing to cleanup', done()) if deplosha.releases.length <= deplosha.keepReleases
+        console.log "Deleting #{deplosha.releases.length - deplosha.keepReleases} releases, keep latest #{deplosha.keepReleases} releases"
+        run "cd #{deplosha.releasesPath} && rm -rf #{deplosha.releases.slice(0, -deplosha.keepReleases).join(' ')}", done
 
     desc """
         Remove current symlink, symlink current release and log file
     """
     task 'symlink', (done) ->
         run """
-          rm -f #{roco.currentPath};
-          ln -s #{roco.releasePath} #{roco.currentPath};
-          ln -s #{roco.sharedPath}/log #{roco.currentPath}/log;
+          rm -f #{deplosha.currentPath};
+          ln -s #{deplosha.releasePath} #{deplosha.currentPath};
+          ln -s #{deplosha.sharedPath}/log #{deplosha.currentPath}/log;
           true
           """, done
 
@@ -100,15 +100,15 @@ namespace 'deploy', ->
         Restart upstart job, or start if job is not running
     """
     task 'restart', (done) ->
-        run "sudo restart #{roco.job} || sudo start #{roco.job}", done
+        run "sudo restart #{deplosha.job} || sudo start #{deplosha.job}", done
 
     desc "Start upstart job"
     task 'start', (done) ->
-        run "sudo start #{roco.job}", done
+        run "sudo start #{deplosha.job}", done
 
     desc "Stop upstart job"
     task 'stop', (done) ->
-        run "sudo stop #{roco.job}", done
+        run "sudo stop #{deplosha.job}", done
 
     desc """
         Rollback current release. Removes current symlink, symlink previous,
@@ -118,14 +118,14 @@ namespace 'deploy', ->
         sequence 'prepare', 'rollback:code', 'restart', 'rollback:cleanup', done
 
     task 'rollback:code', (done) ->
-        if roco.previousRelease
-            run "rm #{roco.currentPath}; ln -s #{roco.previousReleasePath} #{roco.currentPath}", done
+        if deplosha.previousRelease
+            run "rm #{deplosha.currentPath}; ln -s #{deplosha.previousReleasePath} #{deplosha.currentPath}", done
 
     task 'rollback:cleanup', (done) ->
-        run "if [ `readlink #{roco.currentPath}` != #{roco.latestReleasePath} ]; then rm -rf #{roco.latestReleasePath}; fi", done
+        run "if [ `readlink #{deplosha.currentPath}` != #{deplosha.latestReleasePath} ]; then rm -rf #{deplosha.latestReleasePath}; fi", done
 
     task 'setup', (done) ->
-        dirs = [roco.deployTo, roco.releasesPath, roco.sharedPath, roco.sharedPath + '/log'].join(' ')
+        dirs = [deplosha.deployTo, deplosha.releasesPath, deplosha.sharedPath, deplosha.sharedPath + '/log'].join(' ')
         run """
             NAME=`whoami`;
             sudo mkdir -p #{dirs} &&
@@ -137,13 +137,13 @@ namespace 'deploy', ->
 
     task 'writeUpstartScript', (done) ->
         maybeEnv = ''
-        maybeEnv = "env NODE_ENV=\"#{roco.env}\"" if roco.env
+        maybeEnv = "env NODE_ENV=\"#{deplosha.env}\"" if deplosha.env
 
         maybePort = ''
-        maybePort = "env PORT=#{roco.appPort}" if roco.appPort
+        maybePort = "env PORT=#{deplosha.appPort}" if deplosha.appPort
 
         ups = """
-          description "#{roco.application}"
+          description "#{deplosha.application}"
 
           start on startup
           stop on shutdown
@@ -155,16 +155,16 @@ namespace 'deploy', ->
               export PORT
               export NODE_ENV
 
-              cd #{roco.currentPath}
-              /usr/local/bin/node #{roco.currentPath}/#{roco.nodeEntry} >> #{roco.currentPath}/log/#{roco.env}.log
+              cd #{deplosha.currentPath}
+              /usr/local/bin/node #{deplosha.currentPath}/#{deplosha.nodeEntry} >> #{deplosha.currentPath}/log/#{deplosha.env}.log
           end script
           respawn
           """
 
-        if roco.env == 'production'
-            file = roco.application
+        if deplosha.env == 'production'
+            file = deplosha.application
         else
-            file = "#{roco.application}-#{roco.env}"
-        
+            file = "#{deplosha.application}-#{deplosha.env}"
+
         run "sudo echo '#{ups}' > /tmp/upstart.tmp && sudo mv /tmp/upstart.tmp /etc/init/#{file}.conf", done
 
