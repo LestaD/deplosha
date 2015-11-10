@@ -1,7 +1,8 @@
 #!/usr/bin/env node
+
 var optimist = require('optimist');
 var argv = optimist
-    .usage('Usage: roco [-tT] [env] [command]')
+    .usage('Usage: deplosha [-tT] [env] [command]')
     .describe('t', 'list avaliable tasks')
     .describe('T', 'list avaliable tasks with descriptions')
     .describe('v', 'print version')
@@ -9,7 +10,7 @@ var argv = optimist
 
 //console.log(argv);
 
-var roco = require('../lib/rockout');
+var deplosha = require('../lib/rockout');
 
 var env, command;
 if (argv._[1]) {
@@ -21,17 +22,21 @@ if (argv._[1]) {
 } else {
     // ???
 }
-roco.init(env);
+deplosha.init(env);
 
 if (argv.T) {
-    roco.list(argv.T);
-} else if (argv.v) {
+    deplosha.list(argv.T);
+}
+else if (argv.v) {
     console.log(require(__dirname + '/../package.json').version);
-} else if (argv.t) {
-    roco.list(argv.t, true);
-} else if (argv._.length) {
-    roco.perform(command);
-} else {
+}
+else if (argv.t) {
+    deplosha.list(argv.t, true);
+}
+else if (argv._.length) {
+    deplosha.perform(command);
+}
+else {
     optimist.showHelp();
     console.log('Environment variables:\n');
     console.log('APP    - name of app');

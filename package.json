@@ -1,15 +1,14 @@
 {
-  "author": "Anatoliy Chakkaev <mail at anatoliy dot in>",
-  "name": "roco",
+  "name": "deplosha",
   "description": "Deploy app to remote server via ssh",
   "version": "0.1.0",
   "repository": {
     "type": "git",
-    "url": "git@github.com:1602/roco.git"
+    "url": "git@github.com:LestaD/deplosha.git"
   },
   "main": "lib/rockout.js",
   "bin": {
-    "roco": "bin/roco"
+    "deplosha": "bin/deplosha"
   },
   "scripts": {
     "test": "nodeunit test/*_test.js"

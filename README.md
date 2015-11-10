@@ -1,25 +1,27 @@
-[![Stories in Ready](https://badge.waffle.io/1602/roco.png?label=ready)](https://waffle.io/1602/roco)
-## Roco
+
+## Deplosha
+
+> Deplosha is a fork of (Roco)[http://npmjs.com/roco]
 
 Command line tool allows you to execute commands on remote server(s) or locally.
 Useful for deployment, monitoring and other tasks.
 
 ## Installation
 
-    npm install roco -g
+    npm install deplosha -g
 
 ## Usage
 
-    roco deploy:setup   # prepare deploy (create directories)
-    roco deploy         # update code and restart server
+    deplosha deploy:setup   # prepare deploy (create directories)
+    deplosha deploy         # update code and restart server
 
 ## Configuring
 
-Use one of three ways for configuring your app: package.json, roco.coffee or ENV vars
+Use one of three ways for configuring your app: package.json, deplosha.coffee or ENV vars
 
 ### package.json
 
-roco looking for package.json in working directory and set these variables:
+deplosha looking for package.json in working directory and set these variables:
 
 - `pkg.name` as `application`
 - `pkg.repository.name` as `repository`
@@ -27,29 +29,24 @@ roco looking for package.json in working directory and set these variables:
 
 ### Roco.coffee
 
-roco looking for Roco.coffee file in `/etc/roco.coffee`, `~/.roco.coffee`, `./Roco.coffee`, `./config/Roco.coffee` paths
+deplosha looking for Roco.coffee file in `/etc/deplosha.coffee`, `~/.deplosha.coffee`, `./Deplosha.coffee`, `./config/Deplosha.coffee` paths
 
-This files can extend behavior of roco and configure variables. Checkout examples to learn how to use it
-
-### ENV vars
-
-- `HOSTS` - comma separated list of hosts
-- `APP` - name of application
+This files can extend behavior of deplosha and configure variables. Checkout examples to learn how to use it
 
 ## Examples
 
-### my ~/.roco.coffee file
+### my ~/.deplosha.coffee file
 
 ```coffee-script
 namespace 'deploy', ->
     # show status of running application
     task 'status', ->
-        run "sudo status #{roco.application}"
+        run "sudo status #{deplosha.application}"
 
 namespace 'git', ->
     # setup remote private repo
     task 'remote', ->
-        app = roco.application
+        app = deplosha.application
         run """
         mkdir #{app}.git;
         cd #{app}.git;
@@ -74,29 +71,29 @@ namespace 'i', ->
 
     # display last 100 lines of application log
     task 'log', ->
-        run "tail -n 100 #{roco.sharedPath}/log/#{roco.env}.log"
+        run "tail -n 100 #{deplosha.sharedPath}/log/#{deplosha.env}.log"
 ```
 
 ## Deploy
 
 Current deploy script allows you deploy upstart-controlled applications out of box, just run
 
-    roco deploy:setup:upstart
+    deplosha deploy:setup:upstart
 
 to setup upstart script and create dirs, if you use another solution for node daemon management
 feel free to rewrite start/stop/restart scripts:
 
 ```coffee-script
 namespace 'deploy', ->
-    task 'start', (done) -> run "cd #{roco.currentPath}; forever start server.js"
-    task 'stop', (done) -> run "cd #{roco.currentPath}; forever stop"
+    task 'start', (done) -> run "cd #{deplosha.currentPath}; forever start server.js"
+    task 'stop', (done) -> run "cd #{deplosha.currentPath}; forever stop"
 ```
 
 ## Another snippets
 
 ### Update nodejs on server(s)
 
-~/.roco.coffee:
+~/.deplosha.coffee:
 
 ```coffee-script
 set 'nodever', '0.8.10'
@@ -104,18 +101,18 @@ namespace 'node', ->
   task 'update', (done) -> sequence 'download', 'unpack', 'compile', 'install', done
   task 'rebuild', (done) -> sequence 'unpack', 'compile', 'install', done
   task 'download', (done) ->
-    run "cd /tmp && wget http://nodejs.org/dist/v#{roco.nodever}/node-v#{roco.nodever}.tar.gz", done
+    run "cd /tmp && wget http://nodejs.org/dist/v#{deplosha.nodever}/node-v#{deplosha.nodever}.tar.gz", done
   task 'unpack', (done) ->
-    run "cd /tmp && tar xfv node-v#{roco.nodever}.tar.gz", done
+    run "cd /tmp && tar xfv node-v#{deplosha.nodever}.tar.gz", done
   task 'compile', (done) ->
-    run "cd /tmp/node-v#{roco.nodever} && ./configure && make", done
+    run "cd /tmp/node-v#{deplosha.nodever} && ./configure && make", done
   task 'install', (done) ->
-    run "cd /tmp/node-v#{roco.nodever} && sudo make install", done
+    run "cd /tmp/node-v#{deplosha.nodever} && sudo make install", done
 ```
 
 Example: update nodejs on `localhost` and `railwayjs.com` hosts
 
-    HOSTS=localhost,railwayjs.com roco node:update
+    HOSTS=localhost,railwayjs.com deplosha node:update
 
 ## License
 
