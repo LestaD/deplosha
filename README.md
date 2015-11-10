@@ -1,7 +1,7 @@
 
 ## Deplosha
 
-> Deplosha is a fork of (Roco)[http://npmjs.com/roco]
+> Deplosha is a fork of [Roco](http://npmjs.com/roco)
 
 Command line tool allows you to execute commands on remote server(s) or locally.
 Useful for deployment, monitoring and other tasks.
