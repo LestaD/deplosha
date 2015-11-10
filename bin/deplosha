@@ -2,11 +2,11 @@
 
 var optimist = require('optimist');
 var argv = optimist
-    .usage('Usage: deplosha [-tT] [env] [command]')
-    .describe('t', 'list avaliable tasks')
-    .describe('T', 'list avaliable tasks with descriptions')
-    .describe('v', 'print version')
-    .argv;
+  .usage('Usage: deplosha [-tT] [env] [command]')
+  .describe('t', 'list avaliable tasks')
+  .describe('T', 'list avaliable tasks with descriptions')
+  .describe('v', 'print version')
+  .argv;
 
 //console.log(argv);
 
@@ -14,33 +14,33 @@ var deplosha = require('../lib/rockout');
 
 var env, command;
 if (argv._[1]) {
-    env = argv._[0];
-    command = argv._[1];
+  env = argv._[0];
+  command = argv._[1];
 } else if (argv._[0]) {
-    env = 'production';
-    command = argv._[0];
+  env = 'production';
+  command = argv._[0];
 } else {
-    // ???
+  // ???
 }
 deplosha.init(env);
 
 if (argv.T) {
-    deplosha.list(argv.T);
+  deplosha.list(argv.T);
 }
 else if (argv.v) {
-    console.log(require(__dirname + '/../package.json').version);
+  console.log(require(__dirname + '/../package.json').version);
 }
 else if (argv.t) {
-    deplosha.list(argv.t, true);
+  deplosha.list(argv.t, true);
 }
 else if (argv._.length) {
-    deplosha.perform(command);
+  deplosha.perform(command);
 }
 else {
-    optimist.showHelp();
-    console.log('Environment variables:\n');
-    console.log('APP    - name of app');
-    console.log('HOSTS  - comma separated list of hosts to run remote commands');
-    console.log('PORT   - application port (for deploy setup)');
+  optimist.showHelp();
+  console.log('Environment variables:\n');
+  console.log('APP    - name of app');
+  console.log('HOSTS  - comma separated list of hosts to run remote commands');
+  console.log('PORT   - application port (for deploy setup)');
 }
 
