@@ -1,7 +1,7 @@
 {
   "name": "deplosha",
   "description": "Deploy app to remote server via ssh",
-  "version": "0.1.1-dev2",
+  "version": "0.1.1-dev3",
   "repository": {
     "type": "git",
     "url": "git@github.com:LestaD/deplosha.git"
@@ -14,15 +14,15 @@
     "test": "nodeunit test/*_test.js"
   },
   "engines": {
-    "node": ">= 0.4.0"
+    "node": ">= 2"
   },
   "dependencies": {
-    "coffee-script": "*",
-    "optimist": "*"
+    "coffee-script": "1.*",
+    "optimist": "0.6.*"
   },
   "devDependencies": {
-    "nodeunit": "*",
-    "semicov": "*"
+    "nodeunit": "0.*",
+    "semicov": "0.1.1"
   },
   "optionalDependencies": {}
 }

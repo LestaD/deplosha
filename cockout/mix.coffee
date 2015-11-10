@@ -15,13 +15,13 @@ namespace 'node', ->
   task 'update', (done) -> sequence 'download', 'unpack', 'compile', 'install', done
   task 'rebuild', (done) -> sequence 'unpack', 'compile', 'install', done
   task 'download', (done) ->
-  run "cd /tmp && wget http://nodejs.org/dist/v#{deplosha.nodever}/node-v#{deplosha.nodever}.tar.gz", done
+    run "cd /tmp && wget http://nodejs.org/dist/v#{deplosha.nodever}/node-v#{deplosha.nodever}.tar.gz"
   task 'unpack', (done) ->
-  run "cd /tmp && tar xfv node-v#{deplosha.nodever}.tar.gz", done
+    run "cd /tmp && tar xfv node-v#{deplosha.nodever}.tar.gz", done
   task 'compile', (done) ->
-  run "cd /tmp/node-v#{deplosha.nodever} && ./configure && make", done
+    run "cd /tmp/node-v#{deplosha.nodever} && ./configure && make", done
   task 'install', (done) ->
-  run "cd /tmp/node-v#{deplosha.nodever} && sudo make install", done
+    run "cd /tmp/node-v#{deplosha.nodever} && sudo make install", done
 
 namespace 'git', ->
   task 'remote', ->
