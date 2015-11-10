@@ -27,9 +27,9 @@ deplosha looking for package.json in working directory and set these variables:
 - `pkg.repository.name` as `repository`
 - `pkg.repository.type` as `scm`
 
-### Roco.coffee
+### Deplosha.coffee
 
-deplosha looking for Roco.coffee file in `/etc/deplosha.coffee`, `~/.deplosha.coffee`, `./Deplosha.coffee`, `./config/Deplosha.coffee` paths
+deplosha looking for Deplosha.coffee file in `/etc/deplosha.coffee`, `~/.deplosha.coffee`, `./Deplosha.coffee`, `./config/Deplosha.coffee` paths
 
 This files can extend behavior of deplosha and configure variables. Checkout examples to learn how to use it
 

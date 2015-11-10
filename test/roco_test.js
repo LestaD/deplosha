@@ -7,7 +7,7 @@ var deplosha;
 
 exports['init'] = function (test) {
     deplosha = rockout.init();
-    test.equal(deplosha.constructor.name, 'Roco');
+    test.equal(deplosha.constructor.name, 'Deplosha');
     test.done();
 };
 
