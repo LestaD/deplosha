@@ -118,7 +118,7 @@ envKit 'staging', ->
 
 envKit 'development', ->
     set 'hosts', ['dev.service.com']
-    set 'env', 'production'
+    set 'env', 'production' # override environment
 ```
 
 If you change environment, host too changes
