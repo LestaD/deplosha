@@ -1,6 +1,7 @@
 [![Stories in Ready](https://badge.waffle.io/LestaD/deplosha.svg?label=ready&title=Ready)](http://waffle.io/LestaD/deplosha)
 [![Build Status](https://travis-ci.org/LestaD/deplosha.svg?branch=master)](https://travis-ci.org/LestaD/deplosha)
 [![Package version](https://img.shields.io/npm/v/deplosha.svg)](https://www.npmjs.com/package/deplosha)
+[![bitHound Overalll Score](https://www.bithound.io/github/LestaD/deplosha/badges/score.svg)](https://www.bithound.io/github/LestaD/deplosha)
 
 
 ## Deplosha
